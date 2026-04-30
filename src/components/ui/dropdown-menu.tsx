@@ -30,7 +30,7 @@ function DropdownMenuContent({
   className,
   sideOffset = 4,
   ...props
-}: Menu.Popup.Props) {
+}: Omit<Menu.Popup.Props, 'sideOffset'> & { sideOffset?: number }) {
   return (
     <DropdownMenuPortal>
       <Menu.Positioner sideOffset={sideOffset}>
