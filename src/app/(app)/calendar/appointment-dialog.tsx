@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Plus, Loader2, Calendar as CalendarIcon } from "lucide-react"
+import { Plus, Loader2, Calendar as CalendarIcon, Repeat } from "lucide-react"
 import { saveAppointment } from "./actions"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
@@ -75,7 +75,9 @@ export function AppointmentDialog({ patients, appointment, selectedDate, trigger
           <DialogHeader>
             <DialogTitle>{appointment ? "Editar Sessão" : "Agendar Sessão"}</DialogTitle>
             <DialogDescription>
-              Selecione o paciente e defina o horário do atendimento.
+              {appointment
+                ? "Edite os detalhes da sessão."
+                : "Selecione o paciente e defina o horário do atendimento."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -128,6 +130,27 @@ export function AppointmentDialog({ patients, appointment, selectedDate, trigger
               <Label htmlFor="note">Notas (Opcional)</Label>
               <Input id="note" name="note" defaultValue={appointment?.note} placeholder="Ex: Mudança de horário solicitada pelo paciente" />
             </div>
+
+            {!appointment && (
+              <label className="flex items-center gap-3 p-3 rounded-lg border border-border/50 cursor-pointer hover:bg-muted/50 transition-colors">
+                <input
+                  type="checkbox"
+                  name="recurring"
+                  value="true"
+                  defaultChecked={false}
+                  className="h-4 w-4 rounded border-muted-foreground/30 text-primary focus:ring-primary"
+                />
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-sm font-medium flex items-center gap-1.5">
+                    <Repeat className="h-3.5 w-3.5 text-primary" />
+                    Repetir semanalmente
+                  </span>
+                  <span className="text-[11px] text-muted-foreground">
+                    Cria sessões automáticas por 6 meses (26 semanas)
+                  </span>
+                </div>
+              </label>
+            )}
           </div>
           {error && <p className="text-sm font-medium text-destructive mb-4">{error}</p>}
           <DialogFooter>

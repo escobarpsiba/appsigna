@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, Clock, MapPin } from "lucide-react"
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, Clock, MapPin, Repeat } from "lucide-react"
 import { addDays, format, startOfWeek, addWeeks, subWeeks, isSameDay } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
@@ -81,7 +81,10 @@ export default async function CalendarPage({
               ) : (
                 appointments?.filter(a => isSameDay(new Date(a.starts_at), today)).map(a => (
                   <div key={a.id} className="flex flex-col gap-1 border-l-2 border-primary pl-3 py-1">
-                    <span className="text-sm font-bold">{format(new Date(a.starts_at), "HH:mm")} - {a.patients?.name}</span>
+                    <span className="text-sm font-bold flex items-center gap-1.5">
+                      {format(new Date(a.starts_at), "HH:mm")} - {a.patients?.name}
+                      {a.is_recurring && <Repeat className="h-3 w-3 text-primary shrink-0" />}
+                    </span>
                     <span className="text-xs text-muted-foreground flex items-center gap-1">
                       <MapPin className="h-3 w-3" /> {a.modality === 'online' ? 'Online' : 'Presencial'}
                     </span>
@@ -152,7 +155,10 @@ export default async function CalendarPage({
                                 : 'bg-primary/10 text-primary border-primary'
                             }`}>
                             <span className="truncate">{session.patients?.name}</span>
-                            <span className="text-[9px] opacity-70 uppercase">{session.modality}</span>
+                            <span className="text-[9px] opacity-70 uppercase flex items-center gap-0.5">
+                              {session.modality}
+                              {session.is_recurring && <Repeat className="h-2.5 w-2.5" />}
+                            </span>
                           </div>
                         )}
                         {!session && (

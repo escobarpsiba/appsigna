@@ -47,6 +47,8 @@ create table appointments (
   modality text not null default 'Presencial', -- 'Presencial' or 'Online'
   status text not null default 'scheduled', -- 'scheduled', 'completed', 'cancelled'
   note text,
+  recurrence_group_id uuid default null,
+  is_recurring boolean default false,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
