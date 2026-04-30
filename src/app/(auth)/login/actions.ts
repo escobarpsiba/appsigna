@@ -40,14 +40,14 @@ export async function login(formData: FormData) {
   // Redirecionamento baseado no cargo e clínica
   if (profile.role === 'admin') {
     // Se o admin também tiver uma clínica vinculada, oferece a escolha
-    if (profile.tenants?.slug) {
+    if (profile.tenants?.[0]?.slug) {
       redirect("/choice")
     }
     redirect("/admin/dashboard")
   } 
   
   // Se for usuário comum, tenta levar para a clínica dele
-  const clinicSlug = profile.tenants?.slug
+  const clinicSlug = profile.tenants?.[0]?.slug
   if (clinicSlug) {
     redirect(`/c/${clinicSlug}`)
   } else {
