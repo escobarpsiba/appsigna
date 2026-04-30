@@ -104,22 +104,27 @@ export default async function CalendarPage({
                   {format(weekDays[0], "dd")} - {format(weekDays[5], "dd 'de' MMMM", { locale: ptBR })}
                 </h2>
                 <div className="flex items-center gap-1">
-                  <Button variant="outline" size="icon" className="h-8 w-8" asChild>
-                    <Link href={`/calendar?week=${weekOffset - 1}`}>
-                      <ChevronLeft className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                  <Button variant="outline" size="icon" className="h-8 w-8" asChild>
-                    <Link href={`/calendar?week=${weekOffset + 1}`}>
-                      <ChevronRight className="h-4 w-4" />
-                    </Link>
-                  </Button>
+                  <Link
+                    href={`/calendar?week=${weekOffset - 1}`}
+                    className="inline-flex items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium shadow-sm transition-all hover:bg-muted h-8 w-8"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Link>
+                  <Link
+                    href={`/calendar?week=${weekOffset + 1}`}
+                    className="inline-flex items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium shadow-sm transition-all hover:bg-muted h-8 w-8"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Link>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" asChild>
-                  <Link href="/calendar?week=0">Hoje</Link>
-                </Button>
+                <Link
+                  href="/calendar?week=0"
+                  className="inline-flex items-center justify-center rounded-lg border border-transparent bg-clip-padding px-2.5 text-sm font-medium shadow-sm transition-all hover:bg-muted h-8 gap-1.5"
+                >
+                  Hoje
+                </Link>
               </div>
             </div>
           </CardHeader>
