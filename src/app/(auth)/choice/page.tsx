@@ -68,7 +68,7 @@ export default async function AuthChoicePage() {
           </Link>
 
           {/* Opção Clínica */}
-          <Link href={`/c/${profile.tenants.slug}`} className="group">
+          <Link href={`/c/${profile.tenants[0].slug}`} className="group">
             <Card className="h-full border-none shadow-xl transition-all hover:ring-2 hover:ring-emerald-500/50 group-hover:-translate-y-1">
               <CardHeader className="text-center">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-4 transition-transform group-hover:scale-110">
@@ -76,7 +76,7 @@ export default async function AuthChoicePage() {
                 </div>
                 <CardTitle className="text-2xl">Minha Clínica</CardTitle>
                 <CardDescription className="text-base">
-                  Acesse o dashboard da <strong>{profile.tenants.name}</strong> para gerenciar seus pacientes e sessões.
+                  Acesse o dashboard da <strong>{profile.tenants[0].name}</strong> para gerenciar seus pacientes e sessões.
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center pb-8">
