@@ -19,7 +19,7 @@ export default async function AppLayout({
     .single()
 
   const name = profile?.name || user?.email || "Usuário"
-  const initials = name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase()
+  const initials = name.split(" ").map((n: string) => n[0]).join("").substring(0, 2).toUpperCase()
 
   return (
     <SidebarProvider>
