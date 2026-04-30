@@ -121,7 +121,7 @@ export default async function AdminTenantsPage() {
                           </Button>
                         }
                       />
-                      <DropdownMenuContent align="end">
+                      <DropdownMenuContent>
                         <DropdownMenuItem>Editar Dados</DropdownMenuItem>
                         <DropdownMenuItem>Ver Usuários</DropdownMenuItem>
                         <DropdownMenuItem className="text-destructive">Suspender Clínica</DropdownMenuItem>

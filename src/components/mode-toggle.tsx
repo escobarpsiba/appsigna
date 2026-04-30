@@ -26,7 +26,7 @@ export function ModeToggle() {
           </Button>
         }
       />
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent>
         <DropdownMenuItem onClick={() => setTheme("light")}>
           Claro
         </DropdownMenuItem>

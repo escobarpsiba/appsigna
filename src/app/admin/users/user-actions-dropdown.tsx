@@ -36,7 +36,7 @@ export function UserActionsDropdown({ user, tenants }: UserActionsDropdownProps)
           </Button>
         }
       />
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent className="w-56">
         <LinkTenantSelector userId={user.id} tenants={tenants} />
         
         <DropdownMenuItem className="gap-2" onClick={handleMakeAdmin}>
