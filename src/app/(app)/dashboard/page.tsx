@@ -23,7 +23,7 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   const { data: profile } = await supabase
     .from('profiles')
-    .select('tenant_id')
+    .select('tenant_id, name')
     .eq('id', user?.id)
     .single()
 
