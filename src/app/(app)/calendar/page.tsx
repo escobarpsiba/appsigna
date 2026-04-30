@@ -1,12 +1,11 @@
 import { createClient } from "@/lib/supabase/server"
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, Clock, MapPin, Repeat } from "lucide-react"
+import { Calendar as CalendarIcon, Clock, MapPin, Repeat } from "lucide-react"
 import { addDays, format, startOfWeek, addWeeks, subWeeks, isSameDay } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AppointmentDialog } from "./appointment-dialog"
-import Link from "next/link"
+import { WeekNavigation } from "./week-navigation"
 
 
 function toBrazilDate(dateString: string | Date) {
@@ -103,29 +102,10 @@ export default async function CalendarPage({
                 <h2 className="text-lg font-semibold capitalize">
                   {format(weekDays[0], "dd")} - {format(weekDays[5], "dd 'de' MMMM", { locale: ptBR })}
                 </h2>
-                <div className="flex items-center gap-1">
-                  <Link
-                    href={`/calendar?week=${weekOffset - 1}`}
-                    className="inline-flex items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium shadow-sm transition-all hover:bg-muted h-8 w-8"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Link>
-                  <Link
-                    href={`/calendar?week=${weekOffset + 1}`}
-                    className="inline-flex items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium shadow-sm transition-all hover:bg-muted h-8 w-8"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Link>
-                </div>
+                <WeekNavigation weekOffset={weekOffset} />
               </div>
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/calendar?week=0"
-                  className="inline-flex items-center justify-center rounded-lg border border-transparent bg-clip-padding px-2.5 text-sm font-medium shadow-sm transition-all hover:bg-muted h-8 gap-1.5"
-                >
-                  Hoje
-                </Link>
-              </div>
+              <WeekNavigation weekOffset={weekOffset} />
+            </div>
             </div>
           </CardHeader>
           <CardContent className="p-0">
