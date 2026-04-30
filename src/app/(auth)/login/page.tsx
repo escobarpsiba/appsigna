@@ -18,13 +18,20 @@ import { AlertCircle } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 
 export default function LoginPage() {
+  return (
+    <React.Suspense fallback={null}>
+      <LoginFormInner />
+    </React.Suspense>
+  )
+}
+
+function LoginFormInner() {
   const searchParams = useSearchParams()
   const urlError = searchParams.get("error")
   
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
 
-  // Sincronizar erro da URL com o estado
   React.useEffect(() => {
     if (urlError === "clinica-nao-encontrada") {
       setError("Clínica não encontrada. Verifique o link e tente novamente.")
