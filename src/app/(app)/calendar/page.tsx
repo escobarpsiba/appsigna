@@ -20,7 +20,9 @@ export default async function CalendarPage({
   searchParams: Promise<{ week?: string }>
 }) {
   const resolved = await searchParams
+  console.log("CalendarPage searchParams:", resolved)
   const weekOffset = parseInt(resolved.week || "0")
+  console.log("CalendarPage weekOffset:", weekOffset)
   const supabase = await createClient()
 
   // 0. Buscar a clínica do usuário logado
