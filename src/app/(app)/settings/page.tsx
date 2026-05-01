@@ -1,11 +1,28 @@
+import { createClient } from "@/lib/supabase/server"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { ChangePasswordCard } from "./change-password-card"
+import { KnowledgeBaseCard } from "./knowledge-base-card"
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('name, tenant_id')
+    .eq('id', user?.id)
+    .single()
+
+  const { data: tenant } = await supabase
+    .from('tenants')
+    .select('name, ai_knowledge_base')
+    .eq('id', profile?.tenant_id)
+    .single()
+
   return (
     <div className="flex flex-col gap-8">
       <div>
@@ -22,11 +39,11 @@ export default function SettingsPage() {
           <CardContent className="space-y-4">
             <div className="grid gap-2 max-w-sm">
               <Label htmlFor="name">Nome Completo</Label>
-              <Input id="name" defaultValue="Dr. Lúcio Escobar" />
+              <Input id="name" defaultValue={profile?.name || ""} />
             </div>
             <div className="grid gap-2 max-w-sm">
               <Label htmlFor="email">E-mail</Label>
-              <Input id="email" defaultValue="lucio@exemplo.com" disabled />
+              <Input id="email" defaultValue={user?.email || ""} disabled />
             </div>
             <div className="grid gap-2 max-w-sm">
               <Label htmlFor="phone">WhatsApp Profissional</Label>
@@ -62,6 +79,11 @@ export default function SettingsPage() {
             </div>
           </CardContent>
         </Card>
+
+        <KnowledgeBaseCard
+          tenantId={profile?.tenant_id}
+          currentKnowledgeBase={tenant?.ai_knowledge_base || ""}
+        />
       </div>
     </div>
   )

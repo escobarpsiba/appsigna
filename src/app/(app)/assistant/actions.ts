@@ -16,6 +16,14 @@ export async function askAssistant(message: string, history: any[]) {
   const tenantId = profile?.tenant_id
   const userName = profile?.name || "Psicanalista"
 
+  const { data: tenant } = await supabase
+    .from('tenants')
+    .select('name, ai_knowledge_base')
+    .eq('id', tenantId)
+    .single()
+
+  const knowledgeBase = tenant?.ai_knowledge_base || ""
+
   // 1. Coletar Contexto do Banco de Dados (Filtrado por Clínica)
   const { data: patients } = await supabase
     .from('patients')
@@ -44,10 +52,15 @@ export async function askAssistant(message: string, history: any[]) {
     - Pacientes: ${JSON.stringify(patients)}
     - Próximas Sessões: ${JSON.stringify(appointments)}
     - Pagamentos Recentes: ${JSON.stringify(payments)}
+    ${knowledgeBase ? `
+    INSTRUÇÕES PERSONALIZADAS DO PROFISSIONAL (priorize estas orientações):
+    ${knowledgeBase}
+    ` : ''}
     
     REGRAS:
     - Responda sempre em Português do Brasil.
     - Se o usuário pedir para gerar uma mensagem (cobrança, confirmação), seja extremamente cordial e elegante.
+    ${knowledgeBase ? '- Siga as instruções personalizadas definidas pelo profissional acima.' : ''}
     - Use os dados acima para responder perguntas específicas.
     - Não invente dados.
     - Seja conciso.

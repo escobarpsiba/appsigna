@@ -10,6 +10,7 @@ create table tenants (
   id uuid primary key default uuid_generate_v4(),
   name text not null,
   status text not null default 'active',
+  ai_knowledge_base text default '',
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 

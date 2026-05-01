@@ -27,3 +27,28 @@ export async function updatePassword(formData: FormData) {
 
   return { success: true }
 }
+
+export async function saveKnowledgeBase(formData: FormData) {
+  const supabase = await createClient()
+  
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: "Não autorizado." }
+
+  const tenantId = formData.get("tenant_id") as string
+  const knowledgeBase = formData.get("knowledge_base") as string
+
+  if (!tenantId) return { error: "Clínica não encontrada." }
+
+  const { error } = await supabase
+    .from('tenants')
+    .update({ ai_knowledge_base: knowledgeBase })
+    .eq('id', tenantId)
+
+  if (error) {
+    console.error("Erro ao salvar base de conhecimento:", error)
+    return { error: "Não foi possível salvar as instruções." }
+  }
+
+  revalidatePath("/settings")
+  return { success: true }
+}
