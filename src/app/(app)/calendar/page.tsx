@@ -14,15 +14,15 @@ function toBrazilDate(dateString: string | Date) {
 
 const timeSlots = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"]
 
+export const dynamic = "force-dynamic"
+
 export default async function CalendarPage({
   searchParams,
 }: {
   searchParams: Promise<{ week?: string }>
 }) {
   const resolved = await searchParams
-  console.log("CalendarPage searchParams:", resolved)
   const weekOffset = parseInt(resolved.week || "0")
-  console.log("CalendarPage weekOffset:", weekOffset)
   const supabase = await createClient()
 
   // 0. Buscar a clínica do usuário logado
