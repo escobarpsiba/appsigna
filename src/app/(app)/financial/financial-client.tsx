@@ -33,6 +33,12 @@ export function FinancialClient({ payments, patients, revenueData, statusData }:
     setLoading(null)
   }
 
+  function isOverdue(payment: any) {
+    if (payment.status === 'paid') return false
+    if (!payment.appointments?.starts_at) return false
+    return new Date(payment.appointments.starts_at) < new Date()
+  }
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -146,48 +152,53 @@ export function FinancialClient({ payments, patients, revenueData, statusData }:
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {payments.map((payment) => (
-                  <TableRow key={payment.id} className="border-muted/50 hover:bg-muted/30 transition-colors">
-                    <TableCell className="font-semibold">{payment.patients?.name}</TableCell>
-                    <TableCell className="text-sm">
-                      {payment.paid_at 
-                        ? new Date(payment.paid_at).toLocaleDateString('pt-BR') 
-                        : (payment.appointments?.starts_at 
-                            ? new Date(payment.appointments.starts_at).toLocaleDateString('pt-BR') 
-                            : 'N/A')}
-                    </TableCell>
-                    <TableCell className="font-bold text-primary">
-                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(payment.amount)}
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell text-sm italic opacity-70">
-                      {payment.method || '—'}
-                    </TableCell>
-                    <TableCell>
-                      <div className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${
-                        payment.status === 'paid' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' : 
-                        payment.status === 'pending' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400' :
-                        'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400'
-                      }`}>
-                        {payment.status === 'paid' && <CheckCircle2 className="h-3 w-3" />}
-                        {payment.status === 'pending' && <AlertCircle className="h-3 w-3" />}
-                        {payment.status === 'paid' ? 'Pago' : payment.status === 'pending' ? 'Pendente' : 'Atrasado'}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {payment.status !== 'paid' && (
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="h-7 text-[10px] font-bold"
-                          onClick={() => handleMarkAsPaid(payment.id)}
-                          disabled={loading === payment.id}
-                        >
-                          Confirmar PIX
-                        </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {payments.map((payment) => {
+                  const overdue = isOverdue(payment)
+                  return (
+                    <TableRow key={payment.id} className="border-muted/50 hover:bg-muted/30 transition-colors">
+                      <TableCell className="font-semibold">{payment.patients?.name}</TableCell>
+                      <TableCell className="text-sm">
+                        {payment.paid_at 
+                          ? new Date(payment.paid_at).toLocaleDateString('pt-BR') 
+                          : (payment.appointments?.starts_at 
+                              ? new Date(payment.appointments.starts_at).toLocaleDateString('pt-BR') 
+                              : 'N/A')}
+                      </TableCell>
+                      <TableCell className="font-bold text-primary">
+                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(payment.amount)}
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell text-sm italic opacity-70">
+                        {payment.method || '—'}
+                      </TableCell>
+                      <TableCell>
+                        <div className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                          payment.status === 'paid' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' : 
+                          payment.status === 'pending' ? (overdue ? 'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400' : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400') :
+                          'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400'
+                        }`}>
+                          {payment.status === 'paid' && <CheckCircle2 className="h-3 w-3" />}
+                          {payment.status === 'pending' && <AlertCircle className="h-3 w-3" />}
+                          {payment.status === 'paid' ? 'Pago' : payment.status === 'pending' ? (overdue ? 'Atrasado' : 'Pendente') : 'Atrasado'}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {payment.status === 'paid' ? (
+                          <span className="text-[10px] text-muted-foreground italic">—</span>
+                        ) : (
+                          <Button 
+                            size="sm" 
+                            variant={overdue ? "destructive" : "outline"}
+                            className="h-7 text-[10px] font-bold"
+                            onClick={() => handleMarkAsPaid(payment.id)}
+                            disabled={loading === payment.id}
+                          >
+                            {loading === payment.id ? "..." : overdue ? "Marcar Pago" : "Confirmar"}
+                          </Button>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
               </TableBody>
             </Table>
           ) : (
