@@ -1,39 +1,35 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
+
+function NavBtn({ children, week }: { children: React.ReactNode; week: number }) {
+  return (
+    <button
+      onClick={() => window.location.href = `/calendar?week=${week}`}
+      className="inline-flex items-center justify-center rounded-lg border border-border bg-background px-2 text-sm font-medium shadow-sm transition-all hover:bg-muted h-8 w-8"
+    >
+      {children}
+    </button>
+  )
+}
 
 export function WeekNavigation({ weekOffset }: { weekOffset: number }) {
-  const router = useRouter()
-
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-1">
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-8 w-8"
-          onClick={() => router.push(`/calendar?week=${weekOffset - 1}`)}
-        >
+        <NavBtn week={weekOffset - 1}>
           <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-8 w-8"
-          onClick={() => router.push(`/calendar?week=${weekOffset + 1}`)}
-        >
+        </NavBtn>
+        <NavBtn week={weekOffset + 1}>
           <ChevronRight className="h-4 w-4" />
-        </Button>
+        </NavBtn>
       </div>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => router.push("/calendar?week=0")}
+      <button
+        onClick={() => window.location.href = "/calendar?week=0"}
+        className="inline-flex items-center justify-center rounded-lg border border-border bg-background px-2.5 text-sm font-medium shadow-sm transition-all hover:bg-muted h-8 gap-1.5"
       >
         Hoje
-      </Button>
+      </button>
     </div>
   )
 }
