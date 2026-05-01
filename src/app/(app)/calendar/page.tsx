@@ -17,8 +17,10 @@ const timeSlots = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00"
 export default async function CalendarPage({
   searchParams,
 }: {
-  searchParams: { week?: string }
+  searchParams: Promise<{ week?: string }>
 }) {
+  const resolved = await searchParams
+  const weekOffset = parseInt(resolved.week || "0")
   const supabase = await createClient()
 
   // 0. Buscar a clínica do usuário logado
@@ -31,9 +33,7 @@ export default async function CalendarPage({
 
   const tenantId = profile?.tenant_id
 
-  // Calcular a semana atual ou a solicitada
   const today = new Date()
-  const weekOffset = parseInt(searchParams.week || "0")
   const currentWeekStart = startOfWeek(addWeeks(today, weekOffset), { weekStartsOn: 1 })
   const weekDays = Array.from({ length: 6 }).map((_, i) => addDays(currentWeekStart, i))
 
