@@ -110,10 +110,25 @@ export function PatientDialog({ patient, trigger }: PatientDialogProps) {
                 <Input id="price" name="price" defaultValue={patient?.price} type="number" step="0.01" required />
               </div>
               {billingType === "monthly_package" && (
-                <div className="grid gap-2">
-                  <Label htmlFor="monthly_price">Valor do Pacote Mensal (R$)</Label>
-                  <Input id="monthly_price" name="monthly_price" defaultValue={patient?.monthly_price} type="number" step="0.01" placeholder="Ex: 800.00" />
-                </div>
+                <>
+                  <div className="grid gap-2">
+                    <Label htmlFor="monthly_price">Valor do Pacote Mensal (R$)</Label>
+                    <Input id="monthly_price" name="monthly_price" defaultValue={patient?.monthly_price} type="number" step="0.01" placeholder="Ex: 800.00" />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="payment_day">Dia de Vencimento</Label>
+                    <select
+                      id="payment_day"
+                      name="payment_day"
+                      defaultValue={patient?.payment_day || 5}
+                      className="flex h-8 w-full items-center justify-between rounded-lg border border-transparent bg-muted/50 px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-muted/20"
+                    >
+                      {Array.from({ length: 28 }, (_, i) => i + 1).map(day => (
+                        <option key={day} value={day}>Dia {day} de cada mês</option>
+                      ))}
+                    </select>
+                  </div>
+                </>
               )}
             </div>
             <input type="hidden" name="active" value="true" />

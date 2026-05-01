@@ -109,6 +109,17 @@ export function PaymentDialog({ patients }: PaymentDialogProps) {
               </div>
             </div>
             <div className="grid gap-2">
+              <Label htmlFor="due_date">Data de Vencimento</Label>
+              <Input
+                id="due_date"
+                name="due_date"
+                type="date"
+                defaultValue={new Date().toISOString().split('T')[0]}
+                required
+                disabled={loading}
+              />
+            </div>
+            <div className="grid gap-2">
               <Label htmlFor="status">Status</Label>
               <select
                 name="status"

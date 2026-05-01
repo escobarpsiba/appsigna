@@ -26,6 +26,7 @@ export async function savePatient(formData: FormData) {
   const frequency = formData.get("frequency") as string
   const billing_type = formData.get("billing_type") as string || "per_session"
   const monthly_price = parseFloat(formData.get("monthly_price") as string || "0")
+  const payment_day = parseInt(formData.get("payment_day") as string || "5") || null
   const active = formData.get("active") === "true"
 
   const patientData = {
@@ -37,6 +38,7 @@ export async function savePatient(formData: FormData) {
     frequency,
     billing_type,
     monthly_price,
+    payment_day,
     active
   }
 

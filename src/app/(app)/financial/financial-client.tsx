@@ -35,8 +35,8 @@ export function FinancialClient({ payments, patients, revenueData, statusData }:
 
   function isOverdue(payment: any) {
     if (payment.status === 'paid') return false
-    if (!payment.appointments?.starts_at) return false
-    return new Date(payment.appointments.starts_at) < new Date()
+    if (!payment.due_date) return false
+    return new Date(payment.due_date) < new Date()
   }
 
   return (
@@ -144,7 +144,7 @@ export function FinancialClient({ payments, patients, revenueData, statusData }:
               <TableHeader>
                 <TableRow className="border-muted/50 hover:bg-transparent">
                   <TableHead>Paciente</TableHead>
-                  <TableHead>Data</TableHead>
+                  <TableHead>Vencimento</TableHead>
                   <TableHead>Valor</TableHead>
                   <TableHead className="hidden md:table-cell">Método</TableHead>
                   <TableHead>Status</TableHead>
@@ -157,13 +157,13 @@ export function FinancialClient({ payments, patients, revenueData, statusData }:
                   return (
                     <TableRow key={payment.id} className="border-muted/50 hover:bg-muted/30 transition-colors">
                       <TableCell className="font-semibold">{payment.patients?.name}</TableCell>
-                      <TableCell className="text-sm">
-                        {payment.paid_at 
-                          ? new Date(payment.paid_at).toLocaleDateString('pt-BR') 
-                          : (payment.appointments?.starts_at 
-                              ? new Date(payment.appointments.starts_at).toLocaleDateString('pt-BR') 
-                              : 'N/A')}
-                      </TableCell>
+                    <TableCell className="text-sm">
+                      {payment.due_date
+                        ? new Date(payment.due_date + 'T12:00:00').toLocaleDateString('pt-BR')
+                        : (payment.paid_at 
+                            ? new Date(payment.paid_at).toLocaleDateString('pt-BR') 
+                            : 'N/A')}
+                    </TableCell>
                       <TableCell className="font-bold text-primary">
                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(payment.amount)}
                       </TableCell>

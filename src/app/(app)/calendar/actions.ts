@@ -29,6 +29,27 @@ export async function saveAppointment(formData: FormData) {
   const note = formData.get("note") as string
   const recurring = formData.get("recurring") === "true"
 
+  // Buscar billing_type do paciente para calcular due_date
+  const { data: patient } = await supabase
+    .from('patients')
+    .select('billing_type, payment_day')
+    .eq('id', patient_id)
+    .single()
+
+  const isMonthlyPackage = patient?.billing_type === 'monthly_package'
+  const paymentDay = patient?.payment_day || 5
+
+  function calculateDueDate(sessionDate: Date) {
+    if (isMonthlyPackage) {
+      const due = new Date(sessionDate.getFullYear(), sessionDate.getMonth(), paymentDay)
+      if (due < sessionDate) {
+        due.setMonth(due.getMonth() + 1)
+      }
+      return due.toISOString().split('T')[0]
+    }
+    return sessionDate.toISOString().split('T')[0]
+  }
+
   if (id) {
     const appointmentData = {
       tenant_id: profile.tenant_id,
@@ -95,7 +116,8 @@ export async function saveAppointment(formData: FormData) {
         patient_id,
         appointment_id: firstAppointment.id,
         amount,
-        status: 'pending'
+        status: 'pending',
+        due_date: calculateDueDate(new Date(starts_at))
       }])
     }
   } else {
@@ -127,7 +149,8 @@ export async function saveAppointment(formData: FormData) {
         patient_id,
         appointment_id: newAppointment.id,
         amount,
-        status: 'pending'
+        status: 'pending',
+        due_date: calculateDueDate(new Date(starts_at))
       }])
     }
   }

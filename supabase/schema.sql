@@ -33,6 +33,9 @@ create table patients (
   email text,
   price decimal(10,2) default 0,
   frequency text default 'Semanal',
+  billing_type text default 'per_session', -- 'per_session' or 'monthly_package'
+  monthly_price decimal(10,2) default 0,
+  payment_day integer default null, -- day of month for package billing (1-28)
   active boolean default true,
   started_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -62,6 +65,7 @@ create table payments (
   amount decimal(10,2) not null,
   method text default 'PIX',
   status text not null default 'pending', -- 'pending', 'paid', 'overdue'
+  due_date date default null,
   paid_at timestamp with time zone,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
