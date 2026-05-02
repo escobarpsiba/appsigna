@@ -36,15 +36,9 @@ export default async function AuthChoicePage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-12">
       <div className="w-full max-w-[800px] space-y-8">
-        <div className="flex flex-col items-center gap-2 text-center mb-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg mb-2">
-            <span className="text-2xl font-bold text-white">S</span>
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight">Olá, {firstName}</h1>
-          <p className="text-muted-foreground text-lg">
-            Como você deseja acessar a plataforma hoje?
-          </p>
-        </div>
+         <div className="flex flex-col items-center gap-2 text-center mb-4">
+           <img src="/logopng.png" alt="Signa" className="h-32 w-32 md:h-48 md:w-48 rounded-xl object-contain mb-2" />
+         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
           {/* Opção Admin */}

@@ -27,12 +27,12 @@ export default function ForgotPasswordPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-12">
       <div className="w-full max-w-[400px] space-y-8">
-        <div className="flex flex-col items-center gap-2 text-center">
-          <Link href="/login" className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors">
-            <ChevronLeft className="h-3 w-3" /> Voltar ao login
-          </Link>
-          <h1 className="text-3xl font-bold tracking-tight">Signa</h1>
-        </div>
+         <div className="flex flex-col items-center gap-2 text-center">
+           <Link href="/login" className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors">
+             <ChevronLeft className="h-3 w-3" /> Voltar ao login
+           </Link>
+           <img src="/logopng.png" alt="Signa" className="h-32 w-32 md:h-48 md:w-48 rounded-xl object-contain" />
+         </div>
 
         <Card className="shadow-xl border-none">
           <CardHeader className="space-y-1">

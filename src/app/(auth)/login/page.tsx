@@ -56,16 +56,10 @@ function LoginFormInner() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-12">
-      <div className="w-full max-w-[400px] space-y-8">
-        <div className="flex flex-col items-center gap-2 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg">
-            <span className="text-2xl font-bold text-white">S</span>
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight">Signa</h1>
-          <p className="text-sm text-muted-foreground">
-            Gestão elegante para sua prática psicanalítica.
-          </p>
-        </div>
+       <div className="w-full max-w-[400px] space-y-2">
+         <div className="flex flex-col items-center gap-2 text-center">
+           <img src="/logopng.png" alt="Signa" className="h-32 w-32 md:h-48 md:w-48 rounded-xl object-contain" />
+         </div>
 
         <Card className="shadow-xl border-none">
           <CardHeader className="space-y-1">

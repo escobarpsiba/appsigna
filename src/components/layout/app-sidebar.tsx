@@ -66,16 +66,9 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="flex h-16 items-center justify-center border-b px-4">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <span className="text-xl font-bold">S</span>
-          </div>
-          <span className="text-xl font-semibold tracking-tight group-data-[collapsible=icon]:hidden">
-            Signa
-          </span>
-        </div>
-      </SidebarHeader>
+       <SidebarHeader className="flex h-24 md:h-32 items-center justify-center border-b px-4">
+         <img src="/logopng.png" alt="Signa" className="h-20 w-20 md:h-32 md:w-32 rounded-lg object-contain" />
+       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Menu Principal</SidebarGroupLabel>
