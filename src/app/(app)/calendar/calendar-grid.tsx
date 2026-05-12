@@ -23,6 +23,7 @@ function formatBrazilTime(date: Date | string): string {
 
 export function CalendarGrid({ appointments, patients }: { appointments: any[]; patients: any[] }) {
   const [weekOffset, setWeekOffset] = React.useState(0)
+  const [mobileDay, setMobileDay] = React.useState(0)
 
   const today = new Date()
   const currentWeekStart = startOfWeek(addDays(today, weekOffset * 7), { weekStartsOn: 1 })
@@ -36,13 +37,29 @@ export function CalendarGrid({ appointments, patients }: { appointments: any[]; 
     return aptBrasil >= weekStartBrasil && aptBrasil <= weekEndBrasil
   })
 
+  const selectedDay = weekDays[mobileDay]
+  const mobileDaySessions = weekAppointments
+    .filter(a => isSameBrazilDay(a.starts_at, selectedDay))
+    .sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime())
+
+  function SessionCard({ session, children }: { session: any; children: React.ReactNode }) {
+    return (
+      <AppointmentDialog
+        patients={patients || []}
+        appointment={session}
+        trigger={<div className="cursor-pointer">{children}</div>}
+      />
+    )
+  }
+
   return (
     <Card className="shadow-sm overflow-hidden border-none bg-card/50">
       <CardHeader className="border-b border-muted/50 py-4 bg-muted/20">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <CardTitle className="text-lg font-semibold capitalize">
-              {format(weekDays[0], "dd")} - {format(weekDays[5], "dd 'de' MMMM", { locale: ptBR })}
+              <span className="hidden sm:inline">{format(weekDays[0], "dd")} - {format(weekDays[5], "dd 'de' MMMM", { locale: ptBR })}</span>
+              <span className="sm:hidden">{format(selectedDay, "dd 'de' MMMM", { locale: ptBR })}</span>
             </CardTitle>
             <div className="flex items-center gap-1">
               <button
@@ -60,7 +77,7 @@ export function CalendarGrid({ appointments, patients }: { appointments: any[]; 
                 <ChevronRight className="h-4 w-4" />
               </button>
               <button
-                onClick={() => setWeekOffset(0)}
+                onClick={() => { setWeekOffset(0); setMobileDay(0) }}
                 className="inline-flex items-center justify-center rounded-lg border border-border bg-background px-2.5 text-sm font-medium shadow-sm transition-all hover:bg-muted h-8 gap-1.5 ml-1"
                 type="button"
               >
@@ -70,7 +87,58 @@ export function CalendarGrid({ appointments, patients }: { appointments: any[]; 
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-0">
+
+      {/* Mobile: agenda list view */}
+      <div className="sm:hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-muted/50 bg-muted/5">
+          <button
+            onClick={() => setMobileDay(p => Math.max(0, p - 1))}
+            className="inline-flex items-center justify-center rounded-lg border border-border bg-background px-2 text-sm font-medium shadow-sm transition-all hover:bg-muted h-7 w-7"
+            type="button"
+          >
+            <ChevronLeft className="h-3 w-3" />
+          </button>
+          <span className="text-sm font-semibold capitalize">
+            {format(selectedDay, "eeee", { locale: ptBR })}
+          </span>
+          <button
+            onClick={() => setMobileDay(p => Math.min(5, p + 1))}
+            className="inline-flex items-center justify-center rounded-lg border border-border bg-background px-2 text-sm font-medium shadow-sm transition-all hover:bg-muted h-7 w-7"
+            type="button"
+          >
+            <ChevronRight className="h-3 w-3" />
+          </button>
+        </div>
+
+        <div className="divide-y divide-muted/50">
+          {mobileDaySessions.length === 0 ? (
+            <div className="py-12 text-center text-sm text-muted-foreground italic">
+              Nenhuma sessão neste dia.
+            </div>
+          ) : (
+            mobileDaySessions.map(s => (
+              <SessionCard key={s.id} session={s}>
+                <div className="flex items-center gap-4 px-4 py-4 hover:bg-muted/30 transition-colors">
+                  <div className="text-sm font-bold text-primary w-14 shrink-0">
+                    {formatBrazilTime(s.starts_at)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold truncate">{s.patients?.name}</p>
+                    <p className="text-xs text-muted-foreground capitalize flex items-center gap-1.5">
+                      {s.modality}
+                      {s.is_recurring && <Repeat className="h-3 w-3" />}
+                    </p>
+                  </div>
+                  <div className={`h-2.5 w-2.5 rounded-full shrink-0 ${s.status === 'completed' ? 'bg-emerald-500' : s.status === 'cancelled' ? 'bg-muted-foreground/40' : 'bg-primary'}`} />
+                </div>
+              </SessionCard>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Desktop: week grid view */}
+      <CardContent className="p-0 hidden sm:block">
         <div className="grid grid-cols-7 border-b border-muted/50 bg-muted/10">
           <div className="p-2 border-r border-muted/50 w-16" />
           {weekDays.map((day) => (
@@ -95,18 +163,20 @@ export function CalendarGrid({ appointments, patients }: { appointments: any[]; 
                 return (
                   <div key={day.toString()} className="border-r border-muted/50 relative hover:bg-muted/30 transition-colors">
                     {session && (
-                      <div className={`absolute inset-1 rounded-lg p-2 text-[11px] font-semibold overflow-hidden shadow-sm flex flex-col border-l-4 ${session.status === 'completed'
-                          ? 'bg-emerald-100/80 text-emerald-800 border-emerald-500 dark:bg-emerald-900/40 dark:text-emerald-300'
-                          : session.status === 'cancelled'
-                            ? 'bg-muted text-muted-foreground border-muted-foreground/30'
-                            : 'bg-primary/10 text-primary border-primary'
-                        }`}>
-                        <span className="truncate">{session.patients?.name}</span>
-                        <span className="text-[9px] opacity-70 uppercase flex items-center gap-0.5">
-                          {session.modality}
-                          {session.is_recurring && <Repeat className="h-2.5 w-2.5" />}
-                        </span>
-                      </div>
+                      <SessionCard session={session}>
+                        <div className={`absolute inset-1 rounded-lg p-2 text-[11px] font-semibold overflow-hidden shadow-sm flex flex-col border-l-4 ${session.status === 'completed'
+                            ? 'bg-emerald-100/80 text-emerald-800 border-emerald-500 dark:bg-emerald-900/40 dark:text-emerald-300'
+                            : session.status === 'cancelled'
+                              ? 'bg-muted text-muted-foreground border-muted-foreground/30'
+                              : 'bg-primary/10 text-primary border-primary'
+                          }`}>
+                          <span className="truncate">{session.patients?.name}</span>
+                          <span className="text-[9px] opacity-70 uppercase flex items-center gap-0.5">
+                            {session.modality}
+                            {session.is_recurring && <Repeat className="h-2.5 w-2.5" />}
+                          </span>
+                        </div>
+                      </SessionCard>
                     )}
                     {!session && (
                       <AppointmentDialog
