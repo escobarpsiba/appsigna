@@ -25,6 +25,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import { signOut } from "@/app/auth/actions"
 
@@ -63,6 +64,11 @@ const items = [
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const { setOpenMobile, isMobile } = useSidebar()
+
+  function handleNavClick() {
+    if (isMobile) setOpenMobile(false)
+  }
 
   return (
     <Sidebar collapsible="icon">
@@ -80,7 +86,7 @@ export function AppSidebar() {
                     tooltip={item.title}
                     isActive={pathname === item.url}
                     render={
-                      <Link href={item.url}>
+                      <Link href={item.url} onClick={handleNavClick}>
                         <item.icon />
                         <span>{item.title}</span>
                       </Link>
@@ -95,7 +101,7 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <form action={signOut} className="w-full">
+            <form action={signOut} className="w-full" onClick={handleNavClick}>
               <SidebarMenuButton tooltip="Sair" type="submit">
                 <LogOut />
                 <span>Sair</span>
