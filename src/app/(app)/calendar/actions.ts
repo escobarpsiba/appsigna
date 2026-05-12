@@ -98,6 +98,17 @@ export async function saveAppointment(formData: FormData) {
       }
     })
 
+    const allDates = appointmentsToInsert.map(a => a.starts_at)
+    const { data: existing } = await supabase
+      .from('appointments')
+      .select('starts_at')
+      .eq('patient_id', patient_id)
+      .in('starts_at', allDates)
+
+    if (existing && existing.length > 0) {
+      return { error: `Já existem ${existing.length} agendamento(s) para este paciente neste(s) horário(s).` }
+    }
+
     const { error: insertError, data: newAppointments } = await supabase
       .from('appointments')
       .insert(appointmentsToInsert)
@@ -121,6 +132,17 @@ export async function saveAppointment(formData: FormData) {
       }])
     }
   } else {
+    const { data: existing } = await supabase
+      .from('appointments')
+      .select('id')
+      .eq('patient_id', patient_id)
+      .eq('starts_at', starts_at)
+      .maybeSingle()
+
+    if (existing) {
+      return { error: "Já existe um agendamento para este paciente neste horário." }
+    }
+
     const appointmentData = {
       tenant_id: profile.tenant_id,
       patient_id,

@@ -20,9 +20,9 @@ export default async function CalendarPage() {
 
   const tenantId = profile?.tenant_id
 
-  const today = new Date()
-  const rangeStart = subMonths(today, 1).toISOString()
-  const rangeEnd = addMonths(today, 7).toISOString()
+  const todayBrasil = new Date().toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" })
+  const rangeStart = subMonths(new Date(), 1).toISOString()
+  const rangeEnd = addMonths(new Date(), 7).toISOString()
 
   const { data: patients } = await supabase
     .from('patients')
@@ -38,10 +38,8 @@ export default async function CalendarPage() {
     .lte('starts_at', rangeEnd)
 
   const todayAppointments = appointments?.filter(a => {
-    const d = new Date(a.starts_at)
-    return d.getFullYear() === today.getFullYear() &&
-      d.getMonth() === today.getMonth() &&
-      d.getDate() === today.getDate()
+    const aptDate = new Date(a.starts_at).toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" })
+    return aptDate === todayBrasil
   })
 
   return (
@@ -69,7 +67,7 @@ export default async function CalendarPage() {
                 todayAppointments.map(a => (
                   <div key={a.id} className="flex flex-col gap-1 border-l-2 border-primary pl-3 py-1">
                     <span className="text-sm font-bold flex items-center gap-1.5">
-                      {new Date(a.starts_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })} - {a.patients?.name}
+                      {new Date(a.starts_at).toLocaleTimeString("pt-BR", { timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit" })} - {a.patients?.name}
                       {a.is_recurring && <Repeat className="h-3 w-3 text-primary shrink-0" />}
                     </span>
                     <span className="text-xs text-muted-foreground flex items-center gap-1">

@@ -11,13 +11,14 @@ import {
   Sparkles,
   ArrowUpRight,
 } from "lucide-react"
-import { format, isSameDay } from "date-fns"
-import { ptBR } from "date-fns/locale"
 import Link from "next/link"
 
 export default async function DashboardPage() {
   const supabase = await createClient()
   const today = new Date()
+  const todayBrasil = today.toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" })
+  const dayStartBrasil = new Date(`${todayBrasil}T00:00:00-03:00`).toISOString()
+  const dayEndBrasil = new Date(`${todayBrasil}T23:59:59.999-03:00`).toISOString()
 
   // 0. Buscar a clínica do usuário logado
   const { data: { user } } = await supabase.auth.getUser()
@@ -34,8 +35,8 @@ export default async function DashboardPage() {
     .from('appointments')
     .select('*, patients(name)')
     .eq('tenant_id', tenantId)
-    .gte('starts_at', new Date(today.setHours(0,0,0,0)).toISOString())
-    .lte('starts_at', new Date(today.setHours(23,59,59,999)).toISOString())
+    .gte('starts_at', dayStartBrasil)
+    .lte('starts_at', dayEndBrasil)
 
   // 2. Buscar pacientes ativos da clínica
   const { count: activePatients } = await supabase
@@ -70,7 +71,7 @@ export default async function DashboardPage() {
         <h1 className="text-3xl font-bold tracking-tight">
           Bom dia, {userName}
         </h1>
-        <p className="text-muted-foreground">Aqui está o resumo da sua clínica hoje, {format(today, "dd 'de' MMMM", { locale: ptBR })}.</p>
+        <p className="text-muted-foreground">Aqui está o resumo da sua clínica hoje, {new Date().toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo", day: "numeric", month: "long" })}.</p>
       </div>
 
       {/* Stats Grid */}
@@ -133,7 +134,7 @@ export default async function DashboardPage() {
               {appointmentsToday && appointmentsToday.length > 0 ? (
                 appointmentsToday.map((item, i) => (
                   <div key={i} className="flex items-center gap-4 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
-                    <div className="text-sm font-bold w-12 text-primary">{format(new Date(item.starts_at), "HH:mm")}</div>
+                    <div className="text-sm font-bold w-12 text-primary">{new Date(item.starts_at).toLocaleTimeString("pt-BR", { timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit" })}</div>
                     <div className="flex-1">
                       <p className="text-sm font-semibold">{item.patients?.name}</p>
                       <p className="text-xs text-muted-foreground capitalize">{item.modality}</p>

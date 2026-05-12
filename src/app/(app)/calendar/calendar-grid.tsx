@@ -10,8 +10,15 @@ import { AppointmentDialog } from "./appointment-dialog"
 
 const timeSlots = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"]
 
-function toBrazilDate(dateString: string | Date) {
-  return new Date(dateString)
+const BRAZIL_TZ = "America/Sao_Paulo"
+
+function isSameBrazilDay(a: Date | string, b: Date): boolean {
+  const opts = { timeZone: BRAZIL_TZ, year: "numeric" as const, month: "2-digit" as const, day: "2-digit" as const }
+  return new Date(a).toLocaleDateString("en-CA", opts) === b.toLocaleDateString("en-CA", opts)
+}
+
+function formatBrazilTime(date: Date | string): string {
+  return new Date(date).toLocaleTimeString("pt-BR", { timeZone: BRAZIL_TZ, hour: "2-digit", minute: "2-digit", hour12: false })
 }
 
 export function CalendarGrid({ appointments, patients }: { appointments: any[]; patients: any[] }) {
@@ -21,13 +28,12 @@ export function CalendarGrid({ appointments, patients }: { appointments: any[]; 
   const currentWeekStart = startOfWeek(addDays(today, weekOffset * 7), { weekStartsOn: 1 })
   const weekDays = Array.from({ length: 6 }).map((_, i) => addDays(currentWeekStart, i))
 
-  const weekStart = startOfWeek(currentWeekStart, { weekStartsOn: 1 })
-  const weekEnd = addDays(weekStart, 5)
+  const weekStartBrasil = currentWeekStart.toLocaleDateString("en-CA", { timeZone: BRAZIL_TZ })
+  const weekEndBrasil = addDays(currentWeekStart, 6).toLocaleDateString("en-CA", { timeZone: BRAZIL_TZ })
 
   const weekAppointments = appointments.filter(a => {
-    const d = new Date(a.starts_at)
-    return d >= startOfWeek(currentWeekStart, { weekStartsOn: 1 }) &&
-      d <= addDays(weekStart, 6)
+    const aptBrasil = new Date(a.starts_at).toLocaleDateString("en-CA", { timeZone: BRAZIL_TZ })
+    return aptBrasil >= weekStartBrasil && aptBrasil <= weekEndBrasil
   })
 
   return (
@@ -82,8 +88,8 @@ export function CalendarGrid({ appointments, patients }: { appointments: any[]; 
               </div>
               {weekDays.map((day) => {
                 const session = weekAppointments?.find(a =>
-                  isSameDay(toBrazilDate(a.starts_at), day) &&
-                  format(toBrazilDate(a.starts_at), "HH:mm") === time
+                  isSameBrazilDay(a.starts_at, day) &&
+                  formatBrazilTime(a.starts_at) === time
                 )
 
                 return (
